@@ -1,5 +1,6 @@
 package com.shadspace.kahani.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -7,6 +8,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.firestore.FirebaseFirestore
+import com.shadspace.kahani.MyExoplayer
+import com.shadspace.kahani.PlayerActivity
 import com.shadspace.kahani.databinding.AudioListItemRecyclerRowBinding
 import com.shadspace.kahani.models.AudioModel
 
@@ -29,6 +32,12 @@ class AudioListAdapter(private  val audioIdList : List<String>) :
                                 RequestOptions().transform(RoundedCorners(32))
                             )
                             .into(binding.songCoverImageView)
+                        //Direct Playing
+                        binding.root.setOnClickListener{
+                            MyExoplayer.startPlaying(binding.root.context,audio)
+                            it.context.startActivity(Intent(it.context, PlayerActivity::class.java))
+
+                        }
                     }
                 }
 
