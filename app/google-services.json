@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "768501752965",
+    "project_id": "kahani-366e5",
+    "storage_bucket": "kahani-366e5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:768501752965:android:6c3f7cf8ec541f7ca7f5ec",
+        "android_client_info": {
+          "package_name": "com.shadspace.kahani"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBLMW1ZDEntLyIk_NllwWQ3wBm_mEpzKFY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
