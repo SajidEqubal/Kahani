@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Kahani</string>
+    <string name="conti">By continuing you agree to our Terms of Service and Privacy Policy</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="kahani_suno">Kahani <font color="#ff914d">Suno.</font></string>
+    <string name="short_audio_story">Short Audio <font color="#ff914d">Story</font></string>
 </resources>
