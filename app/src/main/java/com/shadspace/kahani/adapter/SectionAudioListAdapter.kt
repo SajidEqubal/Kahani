@@ -57,7 +57,10 @@ class SectionAudioListAdapter(private  val audioIdList : List<String>) :
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.bindData(audioIdList[position])
+        holder.bindData(audioIdList[position]
+
+        )
+
     }
 
 }

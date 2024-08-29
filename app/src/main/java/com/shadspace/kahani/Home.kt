@@ -13,6 +13,7 @@ import androidx.viewpager2.widget.ViewPager2
 import com.shadspace.kahani.adapter.ImageAdapter
 import com.shadspace.kahani.databinding.ActivityHomeBinding
 import android.os.Handler
+import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
@@ -27,9 +28,9 @@ class Home : AppCompatActivity() {
     lateinit var binding: ActivityHomeBinding
     lateinit var categoryAdapter: CategoryAdapter
 
-    private lateinit var  viewPager2: ViewPager2
-    private lateinit var handler : Handler
-    private lateinit var imageList:ArrayList<Int>
+    private lateinit var viewPager2: ViewPager2
+    private lateinit var handler: Handler
+    private lateinit var imageList: ArrayList<Int>
     private lateinit var adapter: ImageAdapter
 
 
@@ -49,21 +50,26 @@ class Home : AppCompatActivity() {
         setUpTransformer()
 
         getCategories()
-        setupSection("section_1",binding.section1MainLayout,binding.section1Title,binding.section1RecyclerView)
+        setupSection(
+            "section_1",
+            binding.section1MainLayout,
+            binding.section1Title,
+            binding.section1RecyclerView
+        )
+        //setupSection()
 
 
-
-        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+        viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 handler.removeCallbacks(runnable)
-                handler.postDelayed(runnable , 2000)
+                handler.postDelayed(runnable, 2000)
             }
         })
     }
 
     // For Categories
-    fun getCategories(){
+    fun getCategories() {
         FirebaseFirestore.getInstance().collection("category")
             .get().addOnSuccessListener {
                 val categoryList = it.toObjects(CategoryModel::class.java)
@@ -71,16 +77,22 @@ class Home : AppCompatActivity() {
             }
     }
 
-    fun setupCategoryRecyclerView(categoryList : List<CategoryModel>){
+    fun setupCategoryRecyclerView(categoryList: List<CategoryModel>) {
         categoryAdapter = CategoryAdapter(categoryList)
-        binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
+        binding.categoriesRecyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.categoriesRecyclerView.adapter = categoryAdapter
     }
 
 
     // For Sections
 
-    fun setupSection(id : String, mainLayout : RelativeLayout, titleView : TextView, recyclerView: RecyclerView){
+    fun setupSection(
+        id: String,
+        mainLayout: RelativeLayout,
+        titleView: TextView,
+        recyclerView: RecyclerView
+    ) {
         FirebaseFirestore.getInstance().collection("sections")
             .document(id)
             .get().addOnSuccessListener {
@@ -88,18 +100,16 @@ class Home : AppCompatActivity() {
                 section?.apply {
                     mainLayout.visibility = View.VISIBLE
                     titleView.text = name
-                    recyclerView.layoutManager = LinearLayoutManager(this@Home,LinearLayoutManager.HORIZONTAL,false)
+                    recyclerView.layoutManager =
+                        LinearLayoutManager(this@Home, LinearLayoutManager.HORIZONTAL, false)
                     recyclerView.adapter = SectionAudioListAdapter(audio)
                     mainLayout.setOnClickListener {
                         AudioListActivity.category = section
-                        startActivity(Intent(this@Home,AudioListActivity::class.java))
+                        startActivity(Intent(this@Home, AudioListActivity::class.java))
                     }
                 }
             }
-
     }
-
-
 
 
     // For Image Slider Above
@@ -113,14 +123,14 @@ class Home : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        handler.postDelayed(runnable , 2000)
+        handler.postDelayed(runnable, 2000)
     }
 
     private val runnable = Runnable {
         viewPager2.currentItem = viewPager2.currentItem + 1
     }
 
-    private fun setUpTransformer(){
+    private fun setUpTransformer() {
         val transformer = CompositePageTransformer()
         transformer.addTransformer(MarginPageTransformer(40))
         transformer.addTransformer { page, position ->
@@ -131,7 +141,7 @@ class Home : AppCompatActivity() {
         viewPager2.setPageTransformer(transformer)
     }
 
-    private fun init(){
+    private fun init() {
         viewPager2 = findViewById(R.id.viewPager2)
         handler = Handler(Looper.myLooper()!!)
         imageList = ArrayList()
@@ -150,7 +160,6 @@ class Home : AppCompatActivity() {
         viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
     }
-
 
 
 }
