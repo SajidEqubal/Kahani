@@ -18,6 +18,9 @@ import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
@@ -68,6 +71,7 @@ class Home : AppCompatActivity() {
         })
     }
 
+
     // For Categories
     fun getCategories() {
         FirebaseFirestore.getInstance().collection("category")
@@ -82,6 +86,24 @@ class Home : AppCompatActivity() {
         binding.categoriesRecyclerView.layoutManager =
             LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false)
         binding.categoriesRecyclerView.adapter = categoryAdapter
+    }
+
+
+    //Showing Player View
+    fun showPlayerView() {
+        binding.playerView.setOnClickListener {
+            startActivity(Intent(this, PlayerActivity::class.java))
+        }
+        MyExoplayer.getCurrentSong()?.let {
+            binding.playerView.visibility = View.VISIBLE
+            binding.songTitleTextView.text = "Playing : " + it.title
+            Glide.with(binding.songCoverImageView).load(it.coverUrl)
+                .apply(
+                    RequestOptions().transform(RoundedCorners(32))
+                ).into(binding.songCoverImageView)
+        } ?: run {
+            binding.playerView.visibility = View.GONE
+        }
     }
 
 
@@ -122,6 +144,9 @@ class Home : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        //Calling for player view
+        showPlayerView()
+
 
         handler.postDelayed(runnable, 2000)
     }

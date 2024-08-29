@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:fontFamily="@font/poppins_medium"
+            android:fontFamily="@font/poppins_bold"
             android:gravity="center"
             android:text="@string/kahani_suno"
             android:textColor="@color/white"
@@ -54,11 +54,11 @@
     </RelativeLayout>
 
     <ScrollView
-        android:scrollbars="none"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/header"
-        android:layout_marginTop="16dp">
+        android:layout_marginTop="16dp"
+        android:scrollbars="none">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -130,8 +130,6 @@
             </RelativeLayout>
 
 
-
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="100dp" />
@@ -141,6 +139,49 @@
 
 
     </ScrollView>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:cardBackgroundColor="@color/secondary"
+        app:cardCornerRadius="16dp">
+
+        <RelativeLayout
+            android:id="@+id/player_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:padding="16dp">
+
+            <ImageView
+                android:id="@+id/song_cover_image_view"
+                android:layout_width="40dp"
+                android:layout_height="40dp" />
+
+            <TextView
+                android:id="@+id/song_title_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/song_cover_image_view"
+                android:autoSizeMaxTextSize="14sp"
+                android:autoSizeMinTextSize="10sp"
+                android:autoSizeStepGranularity="1sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/poppins_medium"
+                android:paddingStart="16dp"
+                android:text="Playing : "
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                />
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
 
 
 </RelativeLayout>

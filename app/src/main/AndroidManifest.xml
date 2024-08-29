@@ -13,6 +13,12 @@
         android:theme="@style/Theme.Kahani"
         tools:targetApi="31">
         <activity
+            android:name=".SubscriptionResult"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
             android:name=".Profile"
             android:exported="false" />
         <activity
@@ -22,10 +28,10 @@
             android:name=".AudioListActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".Home"
             android:exported="false" />
         <activity
-            android:name=".Home"
+            android:name=".Subscribe"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
