@@ -1,5 +1,6 @@
 package com.shadspace.kahani
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import kotlin.math.abs
@@ -12,9 +13,13 @@ import androidx.viewpager2.widget.ViewPager2
 import com.shadspace.kahani.adapter.ImageAdapter
 import com.shadspace.kahani.databinding.ActivityHomeBinding
 import android.os.Handler
+import android.view.View
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shadspace.kahani.adapter.CategoryAdapter
+import com.shadspace.kahani.adapter.SectionAudioListAdapter
 import com.shadspace.kahani.models.CategoryModel
 
 class Home : AppCompatActivity() {
@@ -34,11 +39,18 @@ class Home : AppCompatActivity() {
         setContentView(binding.root)
         enableEdgeToEdge()
 
+
+        binding.profileImage.setOnClickListener {
+            startActivity(Intent(this, Profile::class.java))
+        }
+
+
         init()
         setUpTransformer()
 
-
         getCategories()
+        setupSection("section_1",binding.section1MainLayout,binding.section1Title,binding.section1RecyclerView)
+
 
 
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
@@ -50,6 +62,7 @@ class Home : AppCompatActivity() {
         })
     }
 
+    // For Categories
     fun getCategories(){
         FirebaseFirestore.getInstance().collection("category")
             .get().addOnSuccessListener {
@@ -63,6 +76,29 @@ class Home : AppCompatActivity() {
         binding.categoriesRecyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false)
         binding.categoriesRecyclerView.adapter = categoryAdapter
     }
+
+
+    // For Sections
+
+    fun setupSection(id : String, mainLayout : RelativeLayout, titleView : TextView, recyclerView: RecyclerView){
+        FirebaseFirestore.getInstance().collection("sections")
+            .document(id)
+            .get().addOnSuccessListener {
+                val section = it.toObject(CategoryModel::class.java)
+                section?.apply {
+                    mainLayout.visibility = View.VISIBLE
+                    titleView.text = name
+                    recyclerView.layoutManager = LinearLayoutManager(this@Home,LinearLayoutManager.HORIZONTAL,false)
+                    recyclerView.adapter = SectionAudioListAdapter(audio)
+                    mainLayout.setOnClickListener {
+                        AudioListActivity.category = section
+                        startActivity(Intent(this@Home,AudioListActivity::class.java))
+                    }
+                }
+            }
+
+    }
+
 
 
 

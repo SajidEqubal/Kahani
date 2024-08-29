@@ -34,8 +34,8 @@
         <ImageView
             android:layout_width="220dp"
             android:layout_height="220dp"
+            android:src="@drawable/profile_image_background"
             android:id="@+id/song_gif_image_view"
-            android:visibility="invisible"
             android:layout_gravity="center"/>
     </FrameLayout>
 
