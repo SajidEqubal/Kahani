@@ -12,9 +12,12 @@ constraintlayout = "2.1.4"
 googleGmsGoogleServices = "4.4.2"
 firebaseFirestore = "25.1.0"
 glide = "4.14.2"
-media3Exoplayer = "1.4.0"
+media3Exoplayer = "1.4.1"
 shimmer = "0.5.0"
 razorpay = "1.6.40"
+lottie = "3.6.1"
+firebaseAuth = "23.0.0"
+
 
 
 [libraries]
@@ -33,6 +36,9 @@ firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 razorpay = { module = "com.razorpay:checkout", version.ref = "razorpay" }
+lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
+
 
 
 

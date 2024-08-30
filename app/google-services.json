@@ -12,7 +12,12 @@
           "package_name": "com.shadspace.kahani"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "768501752965-hvg04rh5qm17fmengtb3a07d1f4q7eb8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBLMW1ZDEntLyIk_NllwWQ3wBm_mEpzKFY"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "768501752965-hvg04rh5qm17fmengtb3a07d1f4q7eb8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

@@ -1,90 +1,114 @@
 package com.shadspace.kahani
 
 import android.content.Intent
-import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
-import android.text.TextPaint
-import android.text.style.ClickableSpan
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.method.LinkMovementMethod
 import android.view.View
-import android.widget.TextView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.airbnb.lottie.LottieAnimationView
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
+import com.google.firebase.FirebaseApp
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var mGoogleSignInClient: GoogleSignInClient
+    private val Req_Code: Int = 123
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var loadingAnimation: LottieAnimationView
+    private lateinit var loginButton: LinearLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        val textView: TextView = findViewById(R.id.textView)
-        setMessageWithClickableLink(textView)
+        // Initialize views
+        loadingAnimation = findViewById(R.id.animation_view)
+        loginButton = findViewById(R.id.googleLogin)
+
+        // Initialize Firebase and Google Sign-In
+        FirebaseApp.initializeApp(this)
+        setupGoogleSignIn()
+
+        // Set click listener for login button
+        loginButton.setOnClickListener {
+            startGoogleSignIn()
+        }
     }
 
-    private fun setMessageWithClickableLink(textView: TextView) {
-        // The text and URLs
-        val content = "By continuing you agree to our Terms of Service and Privacy Policy"
-        val url1 = "https://www.google.com" // URL for "Terms of Service"
-        val url2 = "https://www.facebook.com" // URL for "Privacy Policy"
+    private fun setupGoogleSignIn() {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(getString(R.string.default_web_client_id))
+            .requestEmail()
+            .build()
 
-        // ClickableSpan for "Terms of Service"
-        val termsClickableSpan = object : ClickableSpan() {
-            override fun onClick(view: View) {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(url1)
-                startActivity(intent)
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+        firebaseAuth = FirebaseAuth.getInstance()
+    }
+
+    private fun startGoogleSignIn() {
+        toggleLoading(true)
+        val signInIntent: Intent = mGoogleSignInClient.signInIntent
+        startActivityForResult(signInIntent, Req_Code)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == Req_Code) {
+            val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
+            handleSignInResult(task)
+        }
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
+        try {
+            val account: GoogleSignInAccount? = completedTask.getResult(ApiException::class.java)
+            if (account != null) {
+                firebaseAuthWithGoogle(account)
+            } else {
+                toggleLoading(false)
+                Toast.makeText(this, "Sign-in failed. Please try again.", Toast.LENGTH_SHORT).show()
             }
+        } catch (e: ApiException) {
+            toggleLoading(false)
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
+    }
 
-            override fun updateDrawState(textPaint: TextPaint) {
-                super.updateDrawState(textPaint)
-                textPaint.isUnderlineText = true
-                //textPaint.color = Color.BLUE // Customize link color if needed
+    private fun firebaseAuthWithGoogle(account: GoogleSignInAccount) {
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
+        firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Save login status in SharedPreferences using the utility class
+                SharedPrefManager.setLogin(this, true)
+                startActivity(Intent(this, Home::class.java))
+                finish()
+            } else {
+                toggleLoading(false)
+                Toast.makeText(this, "Authentication Failed.", Toast.LENGTH_SHORT).show()
             }
         }
+    }
 
-        // ClickableSpan for "Privacy Policy"
-        val privacyClickableSpan = object : ClickableSpan() {
-            override fun onClick(view: View) {
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.data = Uri.parse(url2)
-                startActivity(intent)
-            }
+    private fun toggleLoading(isLoading: Boolean) {
+        loadingAnimation.visibility = if (isLoading) View.VISIBLE else View.GONE
+        loginButton.visibility = if (isLoading) View.GONE else View.VISIBLE
+    }
 
-            override fun updateDrawState(textPaint: TextPaint) {
-                super.updateDrawState(textPaint)
-                textPaint.isUnderlineText = true
-                // textPaint.color = Color.BLUE // Customize link color if needed
-            }
+    override fun onStart() {
+        super.onStart()
+        if (GoogleSignIn.getLastSignedInAccount(this) != null) {
+            startActivity(Intent(this, Home::class.java))
+            finish()
         }
-
-        val spannableString = SpannableString(content)
-
-        // Set clickable span for "Terms of Service"
-        val termsStartIndex = content.indexOf("Terms of Service")
-        val termsEndIndex = termsStartIndex + "Terms of Service".length
-        spannableString.setSpan(
-            termsClickableSpan,
-            termsStartIndex,
-            termsEndIndex,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        // Set clickable span for "Privacy Policy"
-        val privacyStartIndex = content.indexOf("Privacy Policy")
-        val privacyEndIndex = privacyStartIndex + "Privacy Policy".length
-        spannableString.setSpan(
-            privacyClickableSpan,
-            privacyStartIndex,
-            privacyEndIndex,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
-        )
-
-        // Apply the spannable string to the TextView
-        textView.text = spannableString
-        textView.movementMethod = LinkMovementMethod.getInstance()
-        textView.highlightColor = Color.TRANSPARENT
     }
 }

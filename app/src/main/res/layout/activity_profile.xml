@@ -265,6 +265,7 @@
                 android:background="@color/white" />
 
             <RelativeLayout
+                android:id="@+id/rel_logout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"

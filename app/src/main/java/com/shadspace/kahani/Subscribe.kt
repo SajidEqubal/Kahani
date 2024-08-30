@@ -41,7 +41,7 @@ class Subscribe : AppCompatActivity(), PaymentResultListener {
         try {
             val options = JSONObject()
             options.put("name", "KahaniSuno")
-            options.put("description", "Test Payment")
+            options.put("description", "Monthly Sub")
             options.put(
                 "image",
                 "https://firebasestorage.googleapis.com/v0/b/kahani-366e5.appspot.com/o/logo%2Fpinlogo.png?alt=media&token=806a5d67-6189-49b1-b3eb-8fd270350d11"

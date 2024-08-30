@@ -11,7 +11,7 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
         android:src="@drawable/bg"
@@ -20,36 +20,18 @@
         app:layout_constraintTop_toTopOf="parent" />
 
 
-    <RelativeLayout
-        android:id="@+id/header"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="?android:actionBarSize"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="304dp"
-        android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-
-    </RelativeLayout>
-
-
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="387dp"
-        android:layout_height="452dp"
+        android:layout_height="0dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_marginBottom="25dp"
+        android:layout_marginBottom="48dp"
         android:background="@drawable/getbg"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header">
+        app:layout_constraintStart_toStartOf="parent">
 
 
         <ImageView
@@ -79,38 +61,57 @@
             android:textSize="18sp" />
 
 
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_gravity="center"
+            android:id="@+id/animation_view"
+            android:layout_width="200dp"
+            android:layout_height="80dp"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            android:visibility="gone"
+            android:layout_marginTop="40dp"
+            app:lottie_rawRes="@raw/loading" />
+
+
+
         <LinearLayout
+            android:id="@+id/googleLogin"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
             android:layout_marginLeft="20dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="40dp"
             android:layout_marginRight="20dp"
             android:background="@drawable/btn_bg"
             android:clickable="true"
             android:focusable="true"
+            android:gravity="center"
             android:orientation="horizontal"
             android:padding="16dp">
 
             <ImageView
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
-                android:layout_marginStart="20dp"
+                android:layout_marginEnd="26sp"
                 android:src="@drawable/google" />
 
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:fontFamily="@font/poppins_medium"
+                android:fontFamily="@font/poppins_bold"
                 android:gravity="center"
                 android:text="@string/continue_with_google"
                 android:textColor="@color/black"
-                android:textSize="14sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
 
 
         </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="48dp" />
 
 
     </LinearLayout>
@@ -119,11 +120,12 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
         android:gravity="center"
         android:text="@string/conti"
         android:textColor="@color/white"
         android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
