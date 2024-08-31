@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
@@ -44,6 +45,13 @@ class Home : AppCompatActivity() {
         enableEdgeToEdge()
 
 
+        //Start the shimmer effect
+        binding.simmerViewHome.visibility = View.VISIBLE
+        binding.simmerViewHome.startShimmer()
+        binding.dataView.visibility = View.GONE
+
+
+
         binding.profileImage.setOnClickListener {
             startActivity(Intent(this, Profile::class.java))
         }
@@ -53,13 +61,8 @@ class Home : AppCompatActivity() {
         setUpTransformer()
 
         getCategories()
-        setupSection(
-            "section_1",
-            binding.section1MainLayout,
-            binding.section1Title,
-            binding.section1RecyclerView
-        )
-        //setupSection()
+
+        setupSection("section_1", binding.section1MainLayout, binding.section1Title, binding.section1RecyclerView) //setupSection()
 
 
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -78,8 +81,22 @@ class Home : AppCompatActivity() {
             .get().addOnSuccessListener {
                 val categoryList = it.toObjects(CategoryModel::class.java)
                 setupCategoryRecyclerView(categoryList)
+
+                // Hide shimmer and show the content view once data is loaded
+                binding.simmerViewHome.visibility = View.GONE
+                binding.dataView.visibility = View.VISIBLE
+            }
+            .addOnFailureListener {
+                // Handle any errors here, and stop shimmer if needed
+                Log.e("FirestoreError", "Error loading categories", it)
+
+                // Also stop shimmer and show a message or keep the shimmer, as needed
+                binding.simmerViewHome.stopShimmer()
+                binding.simmerViewHome.visibility = View.GONE
+                binding.dataView.visibility = View.VISIBLE  // You may want to show an error message here
             }
     }
+
 
     fun setupCategoryRecyclerView(categoryList: List<CategoryModel>) {
         categoryAdapter = CategoryAdapter(categoryList)
@@ -140,12 +157,16 @@ class Home : AppCompatActivity() {
         super.onPause()
 
         handler.removeCallbacks(runnable)
+        binding.simmerViewHome.stopShimmer()   // Stop shimmer when the view is not visible to avoid memory leaks
+
     }
 
     override fun onResume() {
         super.onResume()
         //Calling for player view
         showPlayerView()
+        binding.simmerViewHome.startShimmer()  // Start shimmer when the view is visible
+
 
 
         handler.postDelayed(runnable, 2000)

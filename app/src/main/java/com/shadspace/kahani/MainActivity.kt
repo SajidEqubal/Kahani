@@ -2,11 +2,16 @@ package com.shadspace.kahani
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import com.airbnb.lottie.LottieAnimationView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -19,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 
 class MainActivity : AppCompatActivity() {
+
+    private var clickCount = 0
 
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private val Req_Code: Int = 123
@@ -43,7 +50,53 @@ class MainActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             startGoogleSignIn()
         }
+
+        val adminlogin: ImageView = findViewById(R.id.logo)
+        adminlogin.setOnClickListener {
+            clickCount++
+            if (clickCount >= 10) {
+                showLoginDialog()
+                clickCount = 0 // Reset the counter if needed
+            }
+        }
     }
+
+
+    private fun showLoginDialog() {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_login, null)
+        val emailEditText: EditText = dialogView.findViewById(R.id.editEmail)
+        val passwordEditText: EditText = dialogView.findViewById(R.id.editPassword)
+        val loginButton: CardView =
+            dialogView.findViewById(R.id.buttonLogin)
+        val closeIcon: ImageView = dialogView.findViewById(R.id.iconClose)
+
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .create()
+
+        closeIcon.setOnClickListener {
+            dialog.dismiss() // Close the dialog
+        }
+
+        loginButton.setOnClickListener {
+            val email = emailEditText.text.toString()
+            val password = passwordEditText.text.toString()
+
+            if (email == "test@gmail.com" && password == "test@123") {
+                // Start the HomeActivity
+                startActivity(Intent(this, Home::class.java))
+                finish()
+                dialog.dismiss() // Close the dialog
+            } else {
+                // Optionally, show an error message
+                emailEditText.error = "Invalid credentials"
+                passwordEditText.error = "Invalid credentials"
+            }
+        }
+
+        dialog.show()
+    }
+
 
     private fun setupGoogleSignIn() {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)

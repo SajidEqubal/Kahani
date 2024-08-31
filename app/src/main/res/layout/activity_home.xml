@@ -53,17 +53,35 @@
 
     </RelativeLayout>
 
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/simmer_view_home"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/header"
+        android:gravity="center">
+
+        <include layout="@layout/shimmer_item_home" />
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+
     <ScrollView
+        android:id="@+id/data_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/header"
         android:layout_marginTop="16dp"
         android:scrollbars="none">
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="visible">
+
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/viewPager2"
@@ -176,8 +194,7 @@
                 android:paddingStart="16dp"
                 android:text="Playing : "
                 android:textAlignment="center"
-                android:textColor="@color/white"
-                />
+                android:textColor="@color/white" />
 
         </RelativeLayout>
 

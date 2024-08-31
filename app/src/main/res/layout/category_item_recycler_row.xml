@@ -17,6 +17,7 @@
 
         <ImageView
             android:id="@+id/cover_image_view"
+            android:src="@drawable/logo"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="centerInside" />
