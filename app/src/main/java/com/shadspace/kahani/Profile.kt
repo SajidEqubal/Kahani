@@ -5,10 +5,12 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.shadspace.kahani.databinding.ActivityProfileBinding
 
 class Profile : AppCompatActivity() {
@@ -24,10 +26,38 @@ class Profile : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         // Initialize view binding
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val privacyUrl = "https://sites.google.com/view/kahanisuno/privacy-policy"
+        val termsUrl = "https://sites.google.com/view/kahanisuno/terms-conditions"
+        val contactUrl = "https://sites.google.com/view/kahanisuno/contact-us"
+
+        //Load the user's profile photo
+        loadUserProfilePhoto()
+
+
+        binding.relContact.setOnClickListener {
+            val intent = Intent(this, WebView::class.java)
+            intent.putExtra("URL", contactUrl)
+            startActivity(intent)
+        }
+
+        binding.relPrivacy.setOnClickListener {
+            val intent = Intent(this, WebView::class.java)
+            intent.putExtra("URL", privacyUrl)
+            startActivity(intent)
+        }
+
+        binding.relTerms.setOnClickListener {
+            val intent = Intent(this, WebView::class.java)
+            intent.putExtra("URL", termsUrl)
+            startActivity(intent)
+        }
+
+        binding.profileImageView
+
 
         // Initialize Google Sign-In options
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -48,4 +78,21 @@ class Profile : AppCompatActivity() {
             }
         }
     }
+
+    private fun loadUserProfilePhoto() {
+        val user: FirebaseUser? = auth.currentUser
+        if (user != null) {
+            val photoUrl = user.photoUrl
+
+            Glide.with(this)
+                .load(photoUrl)
+                .circleCrop()
+                .error(R.drawable.logo) // on error image
+                .into(binding.profileImageView)
+        } else {
+            binding.profileImageView.setImageResource(R.drawable.logo) // default image
+        }
+
+    }
 }
+

@@ -3,6 +3,7 @@ package com.shadspace.kahani
 import android.content.Context
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import com.google.firebase.firestore.FirebaseFirestore
 import com.shadspace.kahani.models.AudioModel
 
 object MyExoplayer {
@@ -26,6 +27,8 @@ object MyExoplayer {
             //Its a new song so start playing
             currentSong = song
 
+            updateCount()
+
             currentSong?.url?.apply {
                 val mediaItem = MediaItem.fromUri(this)
                 exoPlayer?.setMediaItem(mediaItem)
@@ -37,5 +40,25 @@ object MyExoplayer {
 
 
     }
+    fun updateCount(){
+        currentSong?.id?.let {id->
+            FirebaseFirestore.getInstance().collection("audio")
+                .document(id)
+                .get().addOnSuccessListener {
+                    var latestCount = it.getLong("count")
+                    if(latestCount==null){
+                        latestCount = 1L
+                    }else{
+                        latestCount = latestCount+1
+                    }
+
+                    FirebaseFirestore.getInstance().collection("audio")
+                        .document(id)
+                        .update(mapOf("count" to latestCount))
+
+                }
+        }
+    }
 
 }
+

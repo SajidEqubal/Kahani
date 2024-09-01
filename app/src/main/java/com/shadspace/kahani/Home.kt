@@ -23,8 +23,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
+import com.shadspace.kahani.models.AudioModel
 import com.shadspace.kahani.models.CategoryModel
 
 class Home : AppCompatActivity() {
@@ -62,7 +64,18 @@ class Home : AppCompatActivity() {
 
         getCategories()
 
-        setupSection("section_1", binding.section1MainLayout, binding.section1Title, binding.section1RecyclerView) //setupSection()
+        setupSection(
+            "section_1",
+            binding.section1MainLayout,
+            binding.section1Title,
+            binding.section1RecyclerView
+        ) //setupSection()
+        setupMostlyPlayed(
+            "mostly_played",
+            binding.mostlyPlayedMainLayout,
+            binding.mostlyPlayedTitle,
+            binding.mostlyPlayedRecyclerView
+        ) //setupSection()
 
 
         viewPager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -93,7 +106,8 @@ class Home : AppCompatActivity() {
                 // Also stop shimmer and show a message or keep the shimmer, as needed
                 binding.simmerViewHome.stopShimmer()
                 binding.simmerViewHome.visibility = View.GONE
-                binding.dataView.visibility = View.VISIBLE  // You may want to show an error message here
+                binding.dataView.visibility =
+                    View.VISIBLE  // You may want to show an error message here
             }
     }
 
@@ -127,10 +141,7 @@ class Home : AppCompatActivity() {
     // For Sections
 
     fun setupSection(
-        id: String,
-        mainLayout: RelativeLayout,
-        titleView: TextView,
-        recyclerView: RecyclerView
+        id: String, mainLayout: RelativeLayout, titleView: TextView, recyclerView: RecyclerView
     ) {
         FirebaseFirestore.getInstance().collection("sections")
             .document(id)
@@ -150,8 +161,60 @@ class Home : AppCompatActivity() {
             }
     }
 
+    fun setupMostlyPlayed(
+        id: String, mainLayout: RelativeLayout, titleView: TextView, recyclerView: RecyclerView
+    ) {
+        // Get an instance of Firestore
+        val firestore = FirebaseFirestore.getInstance()
 
-    // For Image Slider Above
+        // Access the "sections" collection and get the document with the provided ID
+        firestore.collection("sections")
+            .document(id)
+            .get()
+            .addOnSuccessListener { sectionSnapshot ->
+                // If section document retrieval is successful, proceed to get most played songs
+                firestore.collection("audio")
+                    .orderBy("count", Query.Direction.DESCENDING)
+                    .limit(5)
+                    .get()
+                    .addOnSuccessListener { audioListSnapshot ->
+                        // Convert Firestore documents to AudioModel objects
+                        val audioModelList = audioListSnapshot.toObjects(AudioModel::class.java)
+                        // Get the list of audio IDs
+                        val audioIdList = audioListSnapshot.map { it.id }
+
+                        // Convert the section document to a CategoryModel object
+                        val section = sectionSnapshot.toObject(CategoryModel::class.java)
+                        section?.apply {
+                            // If section is not null, set the views and adapters
+                            mainLayout.visibility = View.VISIBLE
+                            titleView.text = name
+                            recyclerView.layoutManager = LinearLayoutManager(
+                                recyclerView.context, // Use recyclerView context here
+                                LinearLayoutManager.HORIZONTAL,
+                                false
+                            )
+                            recyclerView.adapter = SectionAudioListAdapter(audioIdList)
+
+                            // Set up a click listener for the main layout
+                            mainLayout.setOnClickListener {
+                                AudioListActivity.category = section
+                                recyclerView.context.startActivity(Intent(recyclerView.context, AudioListActivity::class.java))
+                            }
+                        }
+                    }
+                    .addOnFailureListener { exception ->
+                        // Handle error if fetching audio documents fails
+                        Log.e("FirestoreError", "Error fetching audio documents", exception)
+                    }
+            }
+            .addOnFailureListener { exception ->
+                // Handle error if fetching section document fails
+                Log.e("FirestoreError", "Error fetching section document", exception)
+            }
+    }
+
+// For Image Slider Above
 
     override fun onPause() {
         super.onPause()
@@ -166,7 +229,6 @@ class Home : AppCompatActivity() {
         //Calling for player view
         showPlayerView()
         binding.simmerViewHome.startShimmer()  // Start shimmer when the view is visible
-
 
 
         handler.postDelayed(runnable, 2000)
