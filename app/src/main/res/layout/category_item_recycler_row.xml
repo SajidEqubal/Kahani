@@ -9,8 +9,8 @@
 
 
     <LinearLayout
-        android:layout_width="75dp"
-        android:layout_height="75dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:background="@drawable/round_bg"
         android:gravity="center">
 
@@ -18,8 +18,8 @@
         <ImageView
             android:id="@+id/cover_image_view"
             android:src="@drawable/logo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:scaleType="centerInside" />
 
 
@@ -33,7 +33,7 @@
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="12sp"
+        android:textSize="16sp"
         tools:text="English" />
 
 

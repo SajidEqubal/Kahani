@@ -10,7 +10,7 @@ import android.os.Looper
 import android.view.WindowManager
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.shadspace.kahani.SharedPrefManager // Import the SharedPrefManager
+import com.shadspace.kahani.ui.Home
 
 class Splash : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

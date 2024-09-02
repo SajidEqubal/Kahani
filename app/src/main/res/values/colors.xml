@@ -5,7 +5,7 @@
     <color name="main">#0F0F29</color>
     <color name="secondary">#ff914d</color>
     <color name="grey">#0E0E0E</color>
-    <color name="light_grey">#111111</color>
+    <color name="light_grey">#1F1E1E</color>
     <color name="shimmer_placeholder">#D3D3D3</color>
     <color name="shimmer_placeholder2">#FF424141</color>
 </resources>

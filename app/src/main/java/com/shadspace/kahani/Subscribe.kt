@@ -1,7 +1,9 @@
 package com.shadspace.kahani
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -9,8 +11,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.google.firebase.Firebase
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import com.razorpay.Checkout
 import com.razorpay.PaymentResultListener
+import com.shadspace.kahani.SharedPrefManager.getUserEmail
 import org.json.JSONObject
 import java.math.BigDecimal
 import java.util.Currency
@@ -48,7 +54,7 @@ class Subscribe : AppCompatActivity(), PaymentResultListener {
             )
             options.put("theme.color", "#3399cc")
             options.put("currency", "INR")
-            options.put("amount", "9900") // amount in paise (9900 = 99.00 INR)
+            options.put("amount", "99") // amount in paise (9900 = 99.00 INR)
             options.put("prefill.email", "test@razorpay.com")
             options.put("prefill.contact", "9876543210")
 
@@ -67,11 +73,48 @@ class Subscribe : AppCompatActivity(), PaymentResultListener {
     override fun onPaymentSuccess(razorpayPaymentID: String?) {
         Toast.makeText(this, "Payment Successful: $razorpayPaymentID", Toast.LENGTH_SHORT).show()
         startActivity(Intent(this, SubscriptionResult::class.java))
+
+        if (razorpayPaymentID != null) {
+            storeSubscriptionDataInFirebase(razorpayPaymentID)
+        }
     }
+
 
     override fun onPaymentError(code: Int, response: String?) {
         Toast.makeText(this, "Payment failed: Please try again", Toast.LENGTH_SHORT).show()
 
 
+
     }
+
+    private fun storeSubscriptionDataInFirebase(razorpayPaymentID: String) {
+        val userEmail = getUserEmail(this)
+        if (userEmail != null) {
+            val db = FirebaseFirestore.getInstance()
+            val subscriptionStart = System.currentTimeMillis()
+            val subscriptionEnd = subscriptionStart + 30 * 24 * 60 * 60 * 1000
+
+            // Define the subscription data map
+            val subscriptionData = hashMapOf(
+                "payment_id" to razorpayPaymentID,
+                "subscription_start" to subscriptionStart,
+                "subscription_end" to subscriptionEnd,
+                "subscription_status" to "active" // Update status to active
+            )
+
+            // Update the user's subscription data in the "users" collection
+            db.collection("users")
+                .document(userEmail)
+                .update(subscriptionData as Map<String, Any>)
+                .addOnSuccessListener {
+                    Log.d("Firebase", "User subscription data updated successfully in Firestore!")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Firebase", "Error updating subscription data in Firestore", e)
+                }
+        } else {
+            Log.e("Firebase", "User email not found in shared preferences")
+        }
+    }
+
 }

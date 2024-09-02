@@ -7,7 +7,7 @@
     android:background="@color/black"
     android:fillViewport="true"
     android:orientation="vertical"
-    tools:context=".Home">
+    tools:context=".ui.Home">
 
     <RelativeLayout
         android:id="@+id/header"
@@ -107,10 +107,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_bold"
                     android:text="@string/top_categories"
                     android:textColor="@color/white"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/categories_recycler_view"
@@ -133,10 +133,10 @@
                     android:id="@+id/section_1_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_bold"
                     android:text="Trending in the market today  🔥 "
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     tools:ignore="HardcodedText" />
 
                 <androidx.recyclerview.widget.RecyclerView
@@ -161,10 +161,10 @@
                     android:id="@+id/mostly_played_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_bold"
                     android:text="Top Played "
                     android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textSize="18sp"
                     tools:ignore="HardcodedText" />
 
                 <androidx.recyclerview.widget.RecyclerView

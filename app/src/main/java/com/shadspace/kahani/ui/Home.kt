@@ -1,5 +1,6 @@
-package com.shadspace.kahani
+package com.shadspace.kahani.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
@@ -17,13 +18,19 @@ import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.facebook.shimmer.ShimmerFrameLayout
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.shadspace.kahani.AudioListActivity
+import com.shadspace.kahani.MyExoplayer
+import com.shadspace.kahani.PlayerActivity
+import com.shadspace.kahani.Profile
+import com.shadspace.kahani.R
+import com.shadspace.kahani.SharedPrefManager.getUserEmail
 import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
 import com.shadspace.kahani.models.AudioModel
@@ -46,6 +53,14 @@ class Home : AppCompatActivity() {
         setContentView(binding.root)
         enableEdgeToEdge()
 
+        val userEmail = getUserEmail(this)
+
+        if (userEmail != null) {
+            Toast.makeText(this, "Welcome, $userEmail", Toast.LENGTH_SHORT).show()
+            binding.profileImage.visibility = View.VISIBLE
+        } else {
+            binding.profileImage.visibility = View.GONE
+        }
 
         //Start the shimmer effect
         binding.simmerViewHome.visibility = View.VISIBLE
@@ -199,7 +214,12 @@ class Home : AppCompatActivity() {
                             // Set up a click listener for the main layout
                             mainLayout.setOnClickListener {
                                 AudioListActivity.category = section
-                                recyclerView.context.startActivity(Intent(recyclerView.context, AudioListActivity::class.java))
+                                recyclerView.context.startActivity(
+                                    Intent(
+                                        recyclerView.context,
+                                        AudioListActivity::class.java
+                                    )
+                                )
                             }
                         }
                     }
