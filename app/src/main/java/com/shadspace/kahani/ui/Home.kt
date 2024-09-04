@@ -23,6 +23,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.shadspace.kahani.AudioListActivity
@@ -46,6 +48,9 @@ class Home : AppCompatActivity() {
     private lateinit var imageList: ArrayList<Int>
     private lateinit var adapter: ImageAdapter
 
+    private val auth by lazy {
+        FirebaseAuth.getInstance()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,6 +63,7 @@ class Home : AppCompatActivity() {
         if (userEmail != null) {
             Toast.makeText(this, "Welcome, $userEmail", Toast.LENGTH_SHORT).show()
             binding.profileImage.visibility = View.VISIBLE
+            loadUserProfilePhoto()
         } else {
             binding.profileImage.visibility = View.GONE
         }
@@ -100,6 +106,23 @@ class Home : AppCompatActivity() {
                 handler.postDelayed(runnable, 2000)
             }
         })
+    }
+
+
+    private fun loadUserProfilePhoto() {
+        val user: FirebaseUser? = auth.currentUser
+        if (user != null) {
+            val photoUrl = user.photoUrl
+
+            Glide.with(this)
+                .load(photoUrl)
+                .circleCrop()
+                .error(R.drawable.logo) // on error image
+                .into(binding.profileImage)
+        } else {
+            binding.profileImage.setImageResource(R.drawable.logo) // default image
+        }
+
     }
 
 
