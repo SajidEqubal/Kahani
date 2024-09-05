@@ -11,6 +11,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.shadspace.kahani.SharedPrefManager.clearPreferences
 import com.shadspace.kahani.databinding.ActivityProfileBinding
 
 class Profile : AppCompatActivity() {
@@ -56,8 +57,6 @@ class Profile : AppCompatActivity() {
             startActivity(intent)
         }
 
-        binding.profileImageView
-
 
         // Initialize Google Sign-In options
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -72,12 +71,14 @@ class Profile : AppCompatActivity() {
         binding.relLogout.setOnClickListener {
             mGoogleSignInClient.signOut().addOnCompleteListener {
                 Toast.makeText(this, "Logging Out", Toast.LENGTH_SHORT).show()
+                clearPreferences(this)
                 val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
             }
         }
     }
+
 
     private fun loadUserProfilePhoto() {
         val user: FirebaseUser? = auth.currentUser
