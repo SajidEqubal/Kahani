@@ -19,6 +19,10 @@ class CategoryAdapter (private val categoryList : List<CategoryModel>) :
         RecyclerView.ViewHolder(binding.root){
         //bind the data with views
         fun bindData(category : CategoryModel){
+            // Stop shimmer when data is loaded
+            binding.shimmerLayout.stopShimmer()
+            binding.shimmerLayout.hideShimmer()
+
             binding.nameTextView.text = category.name
             Glide.with(binding.coverImageView).load(category.coverUrl)
                 .apply(
