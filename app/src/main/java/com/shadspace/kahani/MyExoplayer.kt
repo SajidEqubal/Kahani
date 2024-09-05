@@ -8,22 +8,22 @@ import com.shadspace.kahani.models.AudioModel
 
 object MyExoplayer {
 
-    private var exoPlayer : ExoPlayer? = null
-    private var currentSong : AudioModel? =null
+    private var exoPlayer: ExoPlayer? = null
+    private var currentSong: AudioModel? = null
 
-    fun getCurrentSong() : AudioModel?{
+    fun getCurrentSong(): AudioModel? {
         return currentSong
     }
 
-    fun getInstance() : ExoPlayer?{
+    fun getInstance(): ExoPlayer? {
         return exoPlayer
     }
 
-    fun startPlaying(context : Context, song : AudioModel){
-        if(exoPlayer==null)
+    fun startPlaying(context: Context, song: AudioModel) {
+        if (exoPlayer == null)
             exoPlayer = ExoPlayer.Builder(context).build()
 
-        if(currentSong!=song){
+        if (currentSong != song) {
             //Its a new song so start playing
             currentSong = song
 
@@ -40,16 +40,17 @@ object MyExoplayer {
 
 
     }
-    fun updateCount(){
-        currentSong?.id?.let {id->
+
+    fun updateCount() {
+        currentSong?.id?.let { id ->
             FirebaseFirestore.getInstance().collection("audio")
                 .document(id)
                 .get().addOnSuccessListener {
                     var latestCount = it.getLong("count")
-                    if(latestCount==null){
+                    if (latestCount == null) {
                         latestCount = 1L
-                    }else{
-                        latestCount = latestCount+1
+                    } else {
+                        latestCount = latestCount + 1
                     }
 
                     FirebaseFirestore.getInstance().collection("audio")
@@ -58,6 +59,13 @@ object MyExoplayer {
 
                 }
         }
+    }
+
+    fun stop() {
+        // Stop the player and release resources
+        exoPlayer?.stop()
+        exoPlayer?.clearMediaItems() // Clear the playlist if needed
+        currentSong = null
     }
 
 }

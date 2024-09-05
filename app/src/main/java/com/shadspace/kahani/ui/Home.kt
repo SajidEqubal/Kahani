@@ -163,14 +163,50 @@ class Home : AppCompatActivity() {
         binding.playerView.setOnClickListener {
             startActivity(Intent(this, PlayerActivity::class.java))
         }
-        MyExoplayer.getCurrentSong()?.let {
+
+        MyExoplayer.getCurrentSong()?.let { currentSong ->
+            // Show the player view and set song details
             binding.playerView.visibility = View.VISIBLE
-            binding.songTitleTextView.text = "Playing : " + it.title
-            Glide.with(binding.songCoverImageView).load(it.coverUrl)
-                .apply(
-                    RequestOptions().transform(RoundedCorners(32))
-                ).into(binding.songCoverImageView)
+            binding.songTitleTextView.text = "Now Playing \n${currentSong.title}"
+
+            // Load song cover image using Glide
+            Glide.with(binding.songCoverImageView)
+                .load(currentSong.coverUrl)
+                .apply(RequestOptions().transform(RoundedCorners(32)))
+                .into(binding.songCoverImageView)
+
+            // Set play/pause button state based on whether the song is playing
+            if (MyExoplayer.getInstance()?.isPlaying == true) {
+                binding.playPauseImage.setImageResource(R.drawable.ic_pause) // Pause icon
+            } else {
+                binding.playPauseImage.setImageResource(R.drawable.ic_play) // Play icon
+            }
+
+            // Handle play/pause button click
+            binding.playPauseImage.setOnClickListener {
+                val exoPlayer = MyExoplayer.getInstance()
+                exoPlayer?.let {
+                    if (exoPlayer.isPlaying) {
+                        exoPlayer.pause()
+                        binding.playPauseImage.setImageResource(R.drawable.ic_play) // Change to play icon
+                    } else {
+                        exoPlayer.play()
+                        binding.playPauseImage.setImageResource(R.drawable.ic_pause) // Change to pause icon
+                    }
+                }
+            }
+
+            // Handle close button click
+            binding.closeImage.setOnClickListener {
+                // Stop the audio playback
+                MyExoplayer.stop()
+
+                // Hide the player view
+                binding.playerView.visibility = View.GONE
+            }
+
         } ?: run {
+            // If no song is playing, hide the player view
             binding.playerView.visibility = View.GONE
         }
     }
