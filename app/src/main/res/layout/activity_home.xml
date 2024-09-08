@@ -20,15 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Left-aligned ImageView -->
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentStart="true"
-            android:layout_centerVertical="true"
-            android:scaleType="centerCrop"
-            android:src="@drawable/logo" />
+
 
         <!-- Centered TextView -->
         <TextView
@@ -38,6 +30,8 @@
             android:layout_centerInParent="true"
             android:fontFamily="@font/poppins_bold"
             android:gravity="center"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
             android:text="@string/kahani_suno"
             android:textColor="@color/white"
             android:textSize="18sp" />
@@ -232,7 +226,7 @@
                 android:layout_height="25dp"
                 android:layout_toStartOf="@id/closeImage"
                 android:layout_centerVertical="true"
-                android:src="@drawable/ic_play" />
+                android:src="@drawable/ic_pause" />
 
             <ImageView
                 android:id="@+id/closeImage"

@@ -8,6 +8,7 @@ object SharedPrefManager {
     private const val PREF_NAME = "UserPrefs"
     private const val IS_LOGIN = "IsLogin"
     private const val KEY_USER_EMAIL = "user_email"
+    private const val KEY_USER_NAME = "user_email"
 
 
     // Initialize SharedPreferences
