@@ -150,14 +150,21 @@ class MainActivity : AppCompatActivity() {
         firebaseAuth.signInWithCredential(credential).addOnCompleteListener { task ->
             if (task.isSuccessful) {
 
-                // Save the user gmail to shared preferences
+                // Get the user's email and name
                 val userEmail = firebaseAuth.currentUser?.email
-                userEmail?.let {
-                    SharedPrefManager.setLogin(this, true)
-                    SharedPrefManager.setUserEmail(this, it)
+                val userName = firebaseAuth.currentUser?.displayName
 
-                    // Store the user's email in Firestore for subscription purposes
-                    storeUserEmailInFirestore(it)
+                // Save the user email and name to shared preferences
+                userEmail?.let { email ->
+                    SharedPrefManager.setLogin(this, true)
+                    SharedPrefManager.setUserEmail(this, email)
+
+                    userName?.let { name ->
+                        SharedPrefManager.setUserName(this, name) // Save the user's name
+                    }
+
+                    // Store the user's email in Firebase for subscription purposes
+                    storeUserEmailInFirestore(email)
 
                 }
                 startActivity(Intent(this, Home::class.java))

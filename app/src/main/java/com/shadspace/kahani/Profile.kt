@@ -38,6 +38,17 @@ class Profile : AppCompatActivity() {
         //Load the user's profile photo
         loadUserProfilePhoto()
 
+        //Load the user's email and name
+        val userEmail = SharedPrefManager.getUserEmail(this)
+        val userName = SharedPrefManager.getUserName(this)
+
+        binding.viewEmail.text = userEmail
+        binding.viewName.text = userName
+
+        binding.imageClose.setOnClickListener{
+            finish()
+        }
+
 
         binding.relContact.setOnClickListener {
             val intent = Intent(this, WebView::class.java)

@@ -33,10 +33,12 @@ import com.shadspace.kahani.PlayerActivity
 import com.shadspace.kahani.Profile
 import com.shadspace.kahani.R
 import com.shadspace.kahani.SharedPrefManager.getUserEmail
+import com.shadspace.kahani.Subscribe
 import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
 import com.shadspace.kahani.models.AudioModel
 import com.shadspace.kahani.models.CategoryModel
+import com.shadspace.kahani.util.SubscriptionUtils
 
 class Home : AppCompatActivity() {
 
@@ -64,9 +66,19 @@ class Home : AppCompatActivity() {
             Toast.makeText(this, "Welcome, $userEmail", Toast.LENGTH_SHORT).show()
             binding.profileImage.visibility = View.VISIBLE
             loadUserProfilePhoto()
+
+            // Check subscription status using SubscriptionUtils
+            SubscriptionUtils.checkSubscriptionStatus(this) { isActive ->
+                if (isActive) {
+                    binding.relFreeTrial.visibility = View.GONE
+                } else {
+                    binding.relFreeTrial.visibility = View.VISIBLE
+                }
+            }
         } else {
             binding.profileImage.visibility = View.GONE
         }
+
 
         //Start the shimmer effect
         binding.simmerViewHome.visibility = View.VISIBLE
@@ -78,6 +90,11 @@ class Home : AppCompatActivity() {
         binding.profileImage.setOnClickListener {
             startActivity(Intent(this, Profile::class.java))
         }
+        binding.freeTrial.setOnClickListener {
+            startActivity(Intent(this, Subscribe::class.java))
+        }
+
+        //Implementing on users/email/subscription_status : "active" hide the relFreeTrial
 
 
         init()
@@ -346,6 +363,31 @@ class Home : AppCompatActivity() {
         viewPager2.clipChildren = false
         viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
+    }
+
+
+    // Function to check subscription status
+    private fun checkSubscriptionStatus(userEmail: String) {
+        val db = FirebaseFirestore.getInstance()
+        val userDocRef = db.collection("users").document(userEmail)
+
+        userDocRef.get().addOnSuccessListener { document ->
+            if (document != null && document.exists()) {
+                val subscriptionStatus = document.getString("subscription_status")
+
+                if (subscriptionStatus == "active") {
+                    binding.relFreeTrial.visibility = View.GONE
+                } else {
+                    binding.relFreeTrial.visibility = View.VISIBLE
+                }
+            } else {
+                Log.d("Firestore", "No such document")
+                binding.relFreeTrial.visibility = View.VISIBLE
+            }
+        }.addOnFailureListener { exception ->
+            Log.d("Firestore", "get failed with ", exception)
+            binding.relFreeTrial.visibility = View.VISIBLE
+        }
     }
 
 

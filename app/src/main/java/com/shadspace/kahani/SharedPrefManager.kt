@@ -8,7 +8,7 @@ object SharedPrefManager {
     private const val PREF_NAME = "UserPrefs"
     private const val IS_LOGIN = "IsLogin"
     private const val KEY_USER_EMAIL = "user_email"
-    private const val KEY_USER_NAME = "user_email"
+    private const val KEY_USER_NAME = "user_name"
 
 
     // Initialize SharedPreferences
@@ -35,11 +35,24 @@ object SharedPrefManager {
         editor.putString(KEY_USER_EMAIL, email)
         editor.apply()
     }
+    // Save user name
+    fun setUserName(context: Context, name: String) {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString(KEY_USER_NAME, name)
+        editor.apply()
+    }
 
     // Retrieve user email
     fun getUserEmail(context: Context): String? {
         val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         return sharedPreferences.getString(KEY_USER_EMAIL, null)
+    }
+
+    // Retrieve user name
+    fun getUserName(context: Context): String? {
+        val sharedPreferences: SharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+        return sharedPreferences.getString(KEY_USER_NAME, null)
     }
 
 
