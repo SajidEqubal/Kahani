@@ -1,6 +1,5 @@
 package com.shadspace.kahani.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
@@ -36,6 +35,7 @@ import com.shadspace.kahani.SharedPrefManager.getUserEmail
 import com.shadspace.kahani.Subscribe
 import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
+import com.shadspace.kahani.adapter.VerticleAudioListAdapter
 import com.shadspace.kahani.models.AudioModel
 import com.shadspace.kahani.models.CategoryModel
 import com.shadspace.kahani.util.SubscriptionUtils
@@ -97,7 +97,7 @@ class Home : AppCompatActivity() {
         //Implementing on users/email/subscription_status : "active" hide the relFreeTrial
 
 
-        init()
+        imageSlider()
         setUpTransformer()
 
         getCategories()
@@ -108,6 +108,14 @@ class Home : AppCompatActivity() {
             binding.section1Title,
             binding.section1RecyclerView
         ) //setupSection()
+
+        topPicksSection(
+            "top_picks",
+            binding.section2MainLayout,
+            binding.section2Title,
+            binding.section2RecyclerView
+        )
+
         setupMostlyPlayed(
             "mostly_played",
             binding.mostlyPlayedMainLayout,
@@ -252,6 +260,28 @@ class Home : AppCompatActivity() {
             }
     }
 
+    fun topPicksSection(
+        id: String, mainLayout: RelativeLayout, titleView: TextView, recyclerView: RecyclerView
+    ) {
+        FirebaseFirestore.getInstance().collection("sections")
+            .document(id)
+            .get().addOnSuccessListener {
+                val section = it.toObject(CategoryModel::class.java)
+                section?.apply {
+                    mainLayout.visibility = View.VISIBLE
+                    titleView.text = name
+                    recyclerView.layoutManager =
+                        LinearLayoutManager(this@Home, LinearLayoutManager.VERTICAL, false)
+                    recyclerView.adapter = VerticleAudioListAdapter(audio)
+                    mainLayout.setOnClickListener {
+                        AudioListActivity.category = section
+                        startActivity(Intent(this@Home, AudioListActivity::class.java))
+                    }
+                }
+            }
+    }
+
+
     fun setupMostlyPlayed(
         id: String, mainLayout: RelativeLayout, titleView: TextView, recyclerView: RecyclerView
     ) {
@@ -327,7 +357,7 @@ class Home : AppCompatActivity() {
         binding.simmerViewHome.startShimmer()  // Start shimmer when the view is visible
 
 
-        handler.postDelayed(runnable, 2000)
+        handler.postDelayed(runnable, 4000)
     }
 
     private val runnable = Runnable {
@@ -345,7 +375,7 @@ class Home : AppCompatActivity() {
         viewPager2.setPageTransformer(transformer)
     }
 
-    private fun init() {
+    private fun imageSlider() {
         viewPager2 = findViewById(R.id.viewPager2)
         handler = Handler(Looper.myLooper()!!)
         imageList = ArrayList()
@@ -366,29 +396,6 @@ class Home : AppCompatActivity() {
     }
 
 
-    // Function to check subscription status
-    private fun checkSubscriptionStatus(userEmail: String) {
-        val db = FirebaseFirestore.getInstance()
-        val userDocRef = db.collection("users").document(userEmail)
-
-        userDocRef.get().addOnSuccessListener { document ->
-            if (document != null && document.exists()) {
-                val subscriptionStatus = document.getString("subscription_status")
-
-                if (subscriptionStatus == "active") {
-                    binding.relFreeTrial.visibility = View.GONE
-                } else {
-                    binding.relFreeTrial.visibility = View.VISIBLE
-                }
-            } else {
-                Log.d("Firestore", "No such document")
-                binding.relFreeTrial.visibility = View.VISIBLE
-            }
-        }.addOnFailureListener { exception ->
-            Log.d("Firestore", "get failed with ", exception)
-            binding.relFreeTrial.visibility = View.VISIBLE
-        }
-    }
 
 
 }
