@@ -24,6 +24,10 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.shadspace.kahani.AudioListActivity
@@ -37,6 +41,7 @@ import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
 import com.shadspace.kahani.adapter.VerticleAudioListAdapter
 import com.shadspace.kahani.models.AudioModel
+import com.shadspace.kahani.models.Banner
 import com.shadspace.kahani.models.CategoryModel
 import com.shadspace.kahani.util.SubscriptionUtils
 
@@ -355,14 +360,9 @@ class Home : AppCompatActivity() {
         //Calling for player view
         showPlayerView()
         binding.simmerViewHome.startShimmer()  // Start shimmer when the view is visible
-
-
         handler.postDelayed(runnable, 4000)
     }
 
-    private val runnable = Runnable {
-        viewPager2.currentItem = viewPager2.currentItem + 1
-    }
 
     private fun setUpTransformer() {
         val transformer = CompositePageTransformer()
@@ -378,24 +378,57 @@ class Home : AppCompatActivity() {
     private fun imageSlider() {
         viewPager2 = findViewById(R.id.viewPager2)
         handler = Handler(Looper.myLooper()!!)
-        imageList = ArrayList()
+        val imageUrlList = ArrayList<String>()
 
-        imageList.add(R.drawable.one)
-        imageList.add(R.drawable.two)
-        imageList.add(R.drawable.three)
+        val firestore = FirebaseFirestore.getInstance()
+        firestore.collection("banner").get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    for (document in documents) {
+                        val coverUrl = document.getString("coverUrl")
+                        if (!coverUrl.isNullOrEmpty()) {
+                            imageUrlList.add(coverUrl)
+                        }
+                    }
 
+                    if (imageUrlList.isNotEmpty()) {
+                        adapter = ImageAdapter(imageUrlList, viewPager2)
+                        viewPager2.adapter = adapter
+                        viewPager2.offscreenPageLimit = 3
+                        viewPager2.clipToPadding = false
+                        viewPager2.clipChildren = false
+                        viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
-        adapter = ImageAdapter(imageList, viewPager2)
+                        // Set a PageChangeCallback to create an infinite loop effect
+                        viewPager2.registerOnPageChangeCallback(object :
+                            ViewPager2.OnPageChangeCallback() {
+                            override fun onPageSelected(position: Int) {
+                                super.onPageSelected(position)
+                                handler.removeCallbacks(runnable)
+                                handler.postDelayed(runnable, 3000) // Adjust delay as needed
+                            }
+                        })
+                    }
 
-        viewPager2.adapter = adapter
-        viewPager2.offscreenPageLimit = 3
-        viewPager2.clipToPadding = false
-        viewPager2.clipChildren = false
-        viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
-
+                    // Stop shimmer and show the slider
+                    binding.simmerViewHome.stopShimmer()
+                    binding.simmerViewHome.visibility = View.GONE
+                    binding.dataView.visibility = View.VISIBLE
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirestoreError", "Error fetching banner data", exception)
+            }
     }
 
-
+    // Runnable to handle auto-scrolling
+    private val runnable = Runnable {
+        if (viewPager2.currentItem == adapter.itemCount - 1) {
+            viewPager2.currentItem = 0
+        } else {
+            viewPager2.currentItem = viewPager2.currentItem + 1
+        }
+    }
 
 
 }
