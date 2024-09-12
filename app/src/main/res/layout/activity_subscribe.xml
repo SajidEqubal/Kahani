@@ -31,7 +31,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/closeImage"
+            android:id="@+id/crossImage"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_centerVertical="true"

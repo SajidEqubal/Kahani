@@ -9,7 +9,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.shadspace.kahani.R
-import com.shadspace.kahani.models.Banner
 
 class ImageAdapter(private val imageUrls: List<String>, private val viewPager2: ViewPager2) :
     RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {

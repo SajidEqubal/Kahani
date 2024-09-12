@@ -21,8 +21,8 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_play"
-        android:layout_width="120dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         app:cardBackgroundColor="@color/secondary"
         app:cardCornerRadius="10dp"
         android:layout_gravity="center_horizontal|bottom"

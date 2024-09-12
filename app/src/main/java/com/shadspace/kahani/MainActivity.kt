@@ -188,7 +188,7 @@ class MainActivity : AppCompatActivity() {
                 if (document.exists()) {
                     // If the document exists, log or handle the case
                     Log.d("Firebase", "User already exists in Firestore!")
-                    Toast.makeText(this, "User already exists!", Toast.LENGTH_SHORT).show()
+                  //  Toast.makeText(this, "User already exists!", Toast.LENGTH_SHORT).show()
                 } else {
                     // Define the user data map
                     val userData = hashMapOf(
@@ -201,11 +201,7 @@ class MainActivity : AppCompatActivity() {
                     userRef.set(userData)
                         .addOnSuccessListener {
                             Log.d("Firebase", "User email successfully stored in Firestore!")
-                            Toast.makeText(
-                                this,
-                                "User registered successfully!",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                           // Toast.makeText(this, "User registered successfully!", Toast.LENGTH_SHORT).show()
                         }
                         .addOnFailureListener { e ->
                             Log.w("Firebase", "Error storing user email", e)

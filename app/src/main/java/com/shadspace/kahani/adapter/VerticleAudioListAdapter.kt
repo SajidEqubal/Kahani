@@ -51,11 +51,7 @@ class VerticleAudioListAdapter(private val audioIdList: List<String>) :
                                         Intent(binding.root.context, PlayerActivity::class.java)
                                     binding.root.context.startActivity(intent)
                                 } else {
-                                    Toast.makeText(
-                                        binding.root.context,
-                                        "Please subscribe to access this content.",
-                                        Toast.LENGTH_LONG
-                                    ).show()
+                                   // Toast.makeText(binding.root.context, "Please subscribe to access this content.", Toast.LENGTH_LONG).show()
                                     val intent = Intent(binding.root.context, Subscribe::class.java)
                                     binding.root.context.startActivity(intent)
                                 }

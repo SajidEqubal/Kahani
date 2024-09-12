@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -31,19 +32,58 @@ class Subscribe : AppCompatActivity(), PaymentResultListener {
 
         // Initialize Razorpay Checkout
         Checkout.preload(applicationContext)
+        fetchAPIs()
+        //close button click
 
-        val payButton: CardView = findViewById(R.id.btnSubscribe)
-        payButton.setOnClickListener {
-            startPayment()
-
+        val close: ImageView = findViewById(R.id.crossImage)
+        close.setOnClickListener {
+            finish()
         }
+
+
     }
 
-    private fun startPayment() {
+    private fun fetchAPIs() {
+        // Get a reference to Firestore
+        val firestore = FirebaseFirestore.getInstance()
+
+        // Fetch the Razorpay API key from Firestore
+        firestore.collection("apis").document("razorpay")
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.exists()) {
+                    // Get the API key from Firestore document
+                    val razorpayKey = document.getString("APIs") ?: ""
+
+                    // Start the payment with the retrieved key
+                    if (razorpayKey.isNotEmpty()) {
+
+                        //  Toast.makeText(this, razorpayKey, Toast.LENGTH_SHORT).show()
+
+                        //OnClick to start payment
+                        val payButton: CardView = findViewById(R.id.btnSubscribe)
+                        payButton.setOnClickListener {
+                            startPayment(razorpayKey)
+
+                        }
+                    } else {
+                        Toast.makeText(this, "Razorpay key not found", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Error fetching Razorpay key", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+    private fun startPayment(razorpayKey: String) {
         val checkout = Checkout()
 
         // Set your Razorpay API key
-        checkout.setKeyID("rzp_live_43oF5rZJLnvtrG")
+        checkout.setKeyID(razorpayKey)
         try {
             val options = JSONObject()
             options.put("name", "KahaniSuno")
@@ -54,7 +94,7 @@ class Subscribe : AppCompatActivity(), PaymentResultListener {
             )
             options.put("theme.color", "#3399cc")
             options.put("currency", "INR")
-            options.put("amount", "99") // amount in paise (9900 = 99.00 INR)
+            options.put("amount", "9900") // amount in paise (9900 = 99.00 INR)
             options.put("prefill.email", "test@razorpay.com")
             options.put("prefill.contact", "9876543210")
 
@@ -82,7 +122,6 @@ class Subscribe : AppCompatActivity(), PaymentResultListener {
 
     override fun onPaymentError(code: Int, response: String?) {
         Toast.makeText(this, "Payment failed: Please try again", Toast.LENGTH_SHORT).show()
-
 
 
     }

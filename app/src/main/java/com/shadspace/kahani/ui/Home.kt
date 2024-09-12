@@ -17,17 +17,14 @@ import android.util.Log
 import android.view.View
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.shadspace.kahani.AudioListActivity
@@ -41,7 +38,6 @@ import com.shadspace.kahani.adapter.CategoryAdapter
 import com.shadspace.kahani.adapter.SectionAudioListAdapter
 import com.shadspace.kahani.adapter.VerticleAudioListAdapter
 import com.shadspace.kahani.models.AudioModel
-import com.shadspace.kahani.models.Banner
 import com.shadspace.kahani.models.CategoryModel
 import com.shadspace.kahani.util.SubscriptionUtils
 
@@ -52,7 +48,6 @@ class Home : AppCompatActivity() {
 
     private lateinit var viewPager2: ViewPager2
     private lateinit var handler: Handler
-    private lateinit var imageList: ArrayList<Int>
     private lateinit var adapter: ImageAdapter
 
     private val auth by lazy {
@@ -68,7 +63,7 @@ class Home : AppCompatActivity() {
         val userEmail = getUserEmail(this)
 
         if (userEmail != null) {
-            Toast.makeText(this, "Welcome, $userEmail", Toast.LENGTH_SHORT).show()
+           // Toast.makeText(this, "Welcome, $userEmail", Toast.LENGTH_SHORT).show()
             binding.profileImage.visibility = View.VISIBLE
             loadUserProfilePhoto()
 
@@ -243,7 +238,6 @@ class Home : AppCompatActivity() {
 
 
     // For Sections
-
     fun setupSection(
         id: String, mainLayout: RelativeLayout, titleView: TextView, recyclerView: RecyclerView
     ) {
@@ -346,7 +340,6 @@ class Home : AppCompatActivity() {
     }
 
 // For Image Slider Above
-
     override fun onPause() {
         super.onPause()
 
@@ -377,8 +370,11 @@ class Home : AppCompatActivity() {
 
     private fun imageSlider() {
         viewPager2 = findViewById(R.id.viewPager2)
+        val tabLayout = findViewById<TabLayout>(R.id.tabLayout)
         handler = Handler(Looper.myLooper()!!)
         val imageUrlList = ArrayList<String>()
+
+
 
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("banner").get()
@@ -399,6 +395,12 @@ class Home : AppCompatActivity() {
                         viewPager2.clipChildren = false
                         viewPager2.getChildAt(0).overScrollMode = RecyclerView.OVER_SCROLL_NEVER
 
+                        // Set up TabLayout indicators
+                        TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
+                            // You can customize the tabs here if needed
+                        }.attach()
+
+
                         // Set a PageChangeCallback to create an infinite loop effect
                         viewPager2.registerOnPageChangeCallback(object :
                             ViewPager2.OnPageChangeCallback() {
@@ -410,10 +412,6 @@ class Home : AppCompatActivity() {
                         })
                     }
 
-                    // Stop shimmer and show the slider
-                    binding.simmerViewHome.stopShimmer()
-                    binding.simmerViewHome.visibility = View.GONE
-                    binding.dataView.visibility = View.VISIBLE
                 }
             }
             .addOnFailureListener { exception ->
